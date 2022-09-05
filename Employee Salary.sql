@@ -1,4 +1,5 @@
 ---Monthwise Active Employee Salary
+
 SELECT   c.id CustomerID
         ,e.BadgeId
         ,e.FullName
@@ -29,31 +30,35 @@ GROUP BY c.id
 
 
 ---Daywise Active Employee Salary
-SELECT Cast(dbo.tobdt([When]) AS DATE),c.id CustomerID
-,e.BadgeId
-,e.FullName
-,da.DesignationName
-,Cast(dbo.tobdt(e.JoinedOn) AS DATE) JoinedOnOn
-,ac.accounthead
-,SUM(t.Amount) Amount
+
+SELECT   Cast(dbo.tobdt([When]) AS DATE),c.id CustomerID
+        ,e.BadgeId
+        ,e.FullName
+        ,da.DesignationName
+        ,Cast(dbo.tobdt(e.JoinedOn) AS DATE) JoinedOnOn
+        ,ac.accounthead
+        ,SUM(t.Amount) Amount
+
 FROM accounting.account ac
 JOIN accounting.txn t ON t.accountid = ac.id
 JOIN accounting.event ev ON ev.id = t.eventid
 JOIN customer c ON c.customerguid = ac.[owner]
 JOIN Employee e ON c.Id = e.Id
 JOIN Designation da ON e.DesignationId = da.Id
+
 WHERE Cast(dbo.tobdt([When]) AS DATE) >= '2022-05-01'
 AND Cast(dbo.tobdt([When]) AS DATE) < '2022-05-31'
 AND ac.accounthead = 'Salary'
 AND Memo NOT LIKE 'Salary paid on%'
 AND e.BadgeId = 6160
+
 GROUP BY c.id
-,e.BadgeId
-,e.FullName
-,da.DesignationName
-,Cast(dbo.tobdt(e.JoinedOn) AS DATE),
-Cast(dbo.tobdt([When]) AS DATE)
-,ac.accounthead
+        ,e.BadgeId
+        ,e.FullName
+        ,da.DesignationName
+        ,Cast(dbo.tobdt(e.JoinedOn) AS DATE)
+        ,Cast(dbo.tobdt([When]) AS DATE)
+        ,ac.accounthead
 order by 1 
 
 
